@@ -129,7 +129,7 @@ class App extends Component {
           <h1>Search for Artist</h1>
           <input type="text" value={this.state.artistName} onKeyPress={this.handleKeyPress} onChange={e => this.onArtistChange(e)} />
           <button onClick={this.onSubmit}>Search</button>
-          {window.localStorage.getItem('artistArray') !== null ? <p>Recent :  {recent}</p> : null}
+          {window.localStorage.getItem('artistArray') !== null ? <p>Recent search :  {recent}</p> : null}
         </div>
         {dispaly}
       </div>
