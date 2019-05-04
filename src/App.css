@@ -1,0 +1,49 @@
+.SearchDiv{
+    width: 20%;
+    margin: 0 auto;
+    margin-top: 100px;
+    text-align: center
+}
+
+.SearchDiv input{
+    width: 100%;
+    padding: 8px;
+    border: 2px solid #101010;
+    color: #101010;
+    font-size: 20px;
+    text-align: center
+}
+
+.SearchDiv button{
+    width: 160px;
+    height: 30px;
+    margin-top: 20px;
+    background-color: #30b8a8;
+    border: none;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 550
+}
+
+.SearchDiv button:hover{
+    cursor: pointer;
+}
+
+.Info{
+    width: 60%;
+    margin: 0 auto;
+    margin-top: 40px
+}
+
+.InfoDetails{
+    display: flex;
+    justify-content: space-between
+}
+
+.InfoDetails div{
+    width: 65%
+}
+
+.InfoDetails div a{
+    color: red
+}
