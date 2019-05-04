@@ -25,6 +25,17 @@ class App extends Component {
   }
 
   onSubmit = () => {
+    let artistArray = window.localStorage.getItem('artistArray') !== null ? JSON.parse(window.localStorage.getItem('artistArray')) : [];
+    
+    if(artistArray.indexOf(this.state.artistName) === -1){
+       artistArray.push(this.state.artistName)
+       if(artistArray.length > 5){
+         artistArray.splice(0, 1)
+       }
+    }
+
+    window.localStorage.setItem('artistArray',JSON.stringify(artistArray))
+
     if (this.state.artistName.length !== 0) {
       this.setState({ loading: true })
     }
@@ -45,14 +56,23 @@ class App extends Component {
       })
   }
 
+  onRecentArtistClick = async name => {
+    await this.setState({artistName: name});
+    this.onSubmit()
+  }
+
   render() {
-    const topTracks = this.state.topTracks.map((track, index) => (
+    let topTracks = this.state.topTracks.map((track, index) => (
       <div key={index} className="Track">
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <p>{index + 1}.</p>
           <img src={track.image[1]['#text']} alt="Track" />
         </div>
-        <p>{track.name}</p>
+        <div style={{width:'550px', display: 'flex', justifyContent:'space-between' }}>
+          <p><a href={track.url}>{track.name}</a></p>
+          <p>-</p>
+          <p>{track.playcount} Playcount</p>
+        </div>
       </div>
     ));
     let similarArtists, dispaly;
@@ -64,35 +84,44 @@ class App extends Component {
         </div>
       ))
     }
+    let recent;
+    if(window.localStorage.getItem('artistArray') !== null){
+      recent = JSON.parse(window.localStorage.getItem('artistArray')).map((artist,index) => (<span className="Recent" key={index} onClick={() => this.onRecentArtistClick(artist)}>{artist} </span>))
+    }
     if (this.state.loading) {
       dispaly = <Spinner />
     }
     else {
-      dispaly = <div>{typeof this.state.artistInfo.artist !== "undefined" ?
+      dispaly =
         <div>
-          <div className="Info">
-            <h1>Results for searched artist "{this.state.artistInfo.artist.name}"</h1>
-            <div className="InfoDetails">
-              <img src={this.state.artistInfo.artist.image[3]["#text"]} alt="Artist" />
-              <div>
-                <p style={{ fontSize: '20px', fontWeight: '600' }}>{this.state.artistInfo.artist.name}</p>
-                <p dangerouslySetInnerHTML={{ __html: this.state.artistInfo.artist.bio.summary }}></p>
-                <p>Listeners : {this.state.artistInfo.artist.stats.listeners}</p>
-                <p>Playcount : {this.state.artistInfo.artist.stats.playcount}</p>
+          {typeof this.state.artistInfo.artist !== "undefined" ?
+            <div>
+              <div className="Info">
+                <h1>Results for searched artist "{this.state.artistInfo.artist.name}"</h1>
+                <div className="InfoDetails">
+                  <img src={this.state.artistInfo.artist.image[3]["#text"]} alt="Artist" />
+                  <div>
+                    <p style={{ fontSize: '20px', fontWeight: '600' }}>{this.state.artistInfo.artist.name}</p>
+                    <p dangerouslySetInnerHTML={{ __html: this.state.artistInfo.artist.bio.summary }}></p>
+                    <p>Listeners : {this.state.artistInfo.artist.stats.listeners}</p>
+                    <p>Playcount : {this.state.artistInfo.artist.stats.playcount}</p>
+                  </div>
+                </div>
+              </div>
+              <div className="TopTracksSimilarArtists">
+                <div className="TopTracks">
+                  <h1>Top 10 tracks of {this.state.artistInfo.artist.name}</h1>
+                  {topTracks}
+                </div>
+                <div className="SimilarArtists">
+                  <h1>Similar Artists</h1>
+                  {similarArtists}
+                </div>
               </div>
             </div>
-          </div>
-          <div className="TopTracksSimilarArtists">
-            <div className="TopTracks">
-              <h1>Top 10 tracks of {this.state.artistInfo.artist.name}</h1>
-              {topTracks}
-            </div>
-            <div className="SimilarArtists">
-              <h1>Similar Artists</h1>
-              {similarArtists}
-            </div>
-          </div>
-        </div> : null}</div>
+            : null
+          }
+        </div>
     }
     return (
       <div className="App">
@@ -100,6 +129,7 @@ class App extends Component {
           <h1>Search for Artist</h1>
           <input type="text" value={this.state.artistName} onKeyPress={this.handleKeyPress} onChange={e => this.onArtistChange(e)} />
           <button onClick={this.onSubmit}>Search</button>
+          {window.localStorage.getItem('artistArray') !== null ? <p>Recent :  {recent}</p> : null}
         </div>
         {dispaly}
       </div>
